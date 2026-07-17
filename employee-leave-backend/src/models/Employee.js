@@ -96,12 +96,12 @@ employeeSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Employee = mongoose.model("Employee", employeeSchema);
 
 employeeSchema.methods.comparePassword = async function(password){
-
-    return await bcrypt.compare(password,this.password);
-
+  
+  return await bcrypt.compare(password,this.password);
+  
 }
+const Employee = mongoose.model("Employee", employeeSchema);
 
 export default Employee;

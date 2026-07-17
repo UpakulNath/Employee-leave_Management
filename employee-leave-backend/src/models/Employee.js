@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+
+
+
 
 const employeeSchema = new mongoose.Schema(
   {
@@ -83,6 +87,21 @@ const employeeSchema = new mongoose.Schema(
   }
 );
 
+employeeSchema.pre("save", async function () {
+  if (!this.isModified("password")) {
+    return;
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
 const Employee = mongoose.model("Employee", employeeSchema);
+
+employeeSchema.methods.comparePassword = async function(password){
+
+    return await bcrypt.compare(password,this.password);
+
+}
 
 export default Employee;

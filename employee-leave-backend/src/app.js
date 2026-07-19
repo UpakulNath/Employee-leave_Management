@@ -6,6 +6,7 @@ import leaveRoutes from "./routes/leaveRoutes.js";
 
 
 import authMiddleware from "./middleware/authMiddleware.js";
+import adminMiddleware from "./middleware/adminMiddleware.js";
 
 
 const app = express();
@@ -24,12 +25,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/leave", leaveRoutes);
 
-//protected routes
-app.get("/api/test", authMiddleware, (req, res) => {
-  res.json({
-    success: true,
-    message: "Protected route accessed!",
-    user: req.user,
-  });
-});
+
+
 export default app;

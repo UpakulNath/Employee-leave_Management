@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { getAllLeaves, approveLeave } from '../controllers/adminController.js'
+import { getAllLeaves, approveLeave, rejectLeave } from '../controllers/adminController.js'
 
 import authMiddleware from '../middleware/authMiddleware.js'
 import adminMiddleware from '../middleware/adminMiddleware.js'
@@ -20,6 +20,13 @@ router.patch(
     authMiddleware,
     adminMiddleware,
     approveLeave
+);
+
+router.patch(
+    "/leaves/:leaveId/reject",
+    authMiddleware,
+    adminMiddleware,
+    rejectLeave
 );
 
 

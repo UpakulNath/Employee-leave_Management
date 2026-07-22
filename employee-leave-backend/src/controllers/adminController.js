@@ -54,7 +54,7 @@ export const approveLeave = async (req, res) => {
       Casual: "casual",
       Medical: "medical",
       Earned: "earned",
-      Maternity: "maternity"
+      Maternity: "maternity",
     };
     const balanceKey = leaveTypeMap[leave.leaveType];
 
@@ -87,9 +87,45 @@ export const approveLeave = async (req, res) => {
       leave,
     });
 
+   
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+export const rejectLeave = async (req, res) => {
+  try {
+    const { leaveId } = req.params;
+    const leave = await Leave.findById(leaveId);
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found.",
+      });
+    }
+
+    if (leave.status !== "Pending") {
+      return res.status(400).json({
+        success: false,
+        message: "This leave request has already been processed.",
+      });
+    }
+
+    const { remarks } = req.body;
+
+    leave.status = "Rejected";
+    leave.approvedBy = req.user.id;
+    leave.remarks = remarks || "";
+
+    await leave.save();
+
     return res.status(200).json({
       success: true,
-      message: "Leave approved successfully.",
+      message: "Leave rejected successfully.",
       leave,
     });
   } catch (error) {

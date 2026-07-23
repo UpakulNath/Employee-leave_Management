@@ -1,6 +1,46 @@
+import { useEffect, useState } from "react";
 import LeaveHistoryTable from "../components/LeaveHistoryTable";
+import api from "../api/axios";
 
 function LeaveHistory() {
+  const [leaves, setLeaves] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchLeaveHistory = async () => {
+      try {
+        const response = await api.get("/leave/my-leaves");
+        setLeaves(response.data.leaves);
+      } catch (err) {
+        setError(
+          err.response?.data?.message ||
+          "Failed to load leave history."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaveHistory();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center text-lg font-semibold">
+        Loading Leave History...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600 font-semibold">
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div>
 
@@ -16,7 +56,7 @@ function LeaveHistory() {
 
       </div>
 
-      <LeaveHistoryTable />
+      <LeaveHistoryTable leaves={leaves} />
 
     </div>
   );
